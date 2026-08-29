@@ -52,7 +52,15 @@ drop policy if exists "public read categories" on categories;
 create policy "public read categories" on categories for select to anon, authenticated using (true);
 
 drop policy if exists "public read visible products" on products;
-create policy "public read visible products" on products for select to anon, authenticated using (is_visible = true);
+create policy "public read visible products" on products for select to anon using (is_visible = true);
+drop policy if exists "authenticated read all products" on products;
+create policy "authenticated read all products" on products for select to authenticated using (true);
+drop policy if exists "authenticated insert products" on products;
+create policy "authenticated insert products" on products for insert to authenticated with check (true);
+drop policy if exists "authenticated update products" on products;
+create policy "authenticated update products" on products for update to authenticated using (true) with check (true);
+drop policy if exists "authenticated delete products" on products;
+create policy "authenticated delete products" on products for delete to authenticated using (true);
 
 drop policy if exists "public read visible services" on printing_services;
 create policy "public read visible services" on printing_services for select to anon, authenticated using (is_visible = true);
