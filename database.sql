@@ -133,3 +133,16 @@ drop policy if exists "authenticated delete product images" on storage.objects;
 create policy "authenticated delete product images" on storage.objects
 for delete to authenticated
 using (bucket_id = 'product-images');
+
+-- Site appearance and navigation settings.
+alter table site_settings add column if not exists hero_image_url text;
+alter table site_settings add column if not exists hero_title text default 'كل احتياجاتك المدرسية والمكتبية في مكان واحد';
+alter table site_settings add column if not exists hero_description text default 'كتب ومذكرات وأدوات مدرسية وكشاكيل وخدمات طباعة وتصوير.';
+alter table site_settings add column if not exists work_hours text;
+alter table site_settings add column if not exists nav_items jsonb default '[{"label":"الرئيسية","href":"#"},{"label":"المنتجات","href":"products.html"},{"label":"الكتب والمذكرات","href":"#categories"},{"label":"الأدوات المدرسية","href":"#categories"},{"label":"الطباعة والتصوير","href":"#printing"},{"label":"العروض","href":"#offers"},{"label":"تواصل معنا","href":"#contact"}]'::jsonb;
+drop policy if exists "authenticated manage site settings" on site_settings;
+create policy "authenticated manage site settings" on site_settings for all to authenticated using (true) with check (true);
+
+insert into site_settings (phone, whatsapp, hero_title, hero_description, work_hours)
+select '01098090100', '201098090100', 'كل احتياجاتك المدرسية والمكتبية في مكان واحد', 'كتب ومذكرات وأدوات مدرسية وكشاكيل وخدمات طباعة وتصوير.', 'يوميًا من 9 صباحًا إلى 10 مساءً'
+where not exists (select 1 from site_settings);
