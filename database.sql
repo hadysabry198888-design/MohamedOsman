@@ -43,6 +43,18 @@ insert into site_settings (phone, whatsapp)
 select '01098090100', '201098090100'
 where not exists (select 1 from site_settings);
 
+-- Prices, discounts, and homepage daily offers.
+alter table products add column if not exists price numeric(12,2);
+alter table products add column if not exists original_price numeric(12,2);
+alter table products add column if not exists is_daily_offer boolean default false;
+alter table products add column if not exists discount_percent numeric(5,2) default 0;
+alter table products add column if not exists offer_start_at timestamptz;
+alter table products add column if not exists offer_end_at timestamptz;
+
+-- Header image display dimensions, in pixels.
+alter table site_settings add column if not exists hero_image_width integer default 600;
+alter table site_settings add column if not exists hero_image_height integer default 355;
+
 alter table categories enable row level security;
 alter table products enable row level security;
 alter table printing_services enable row level security;
